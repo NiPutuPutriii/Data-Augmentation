@@ -1,0 +1,32 @@
+import torch
+import torchaudio
+import torchaudio.functional as F
+from torchaudio.utils import download_asset
+from IPython.display import Audio
+import matplotlib.pyplot as plt
+
+print(torch.__version__)
+print(torchaudio.__version__)
+
+waveform, sample_rate = torchaudio.load('tuutt.wav')
+
+def apply_codec(waveform, sample_rate, format, encoder=None):
+    encoder = torchaudio.io.AudioEffector(format=format, encoder=encoder)
+    return encoder.apply(waveform, sample_rate)
+
+# Original audio
+plot_waveform(waveform, sample_rate, title="Original")
+plot_specgram(waveform, sample_rate, title="Original")
+Audio(waveform, rate=sample_rate)
+
+# 8-bit mu-law codec
+mulaw = apply_codec(waveform, sample_rate, "wav", encoder="pcm_mulaw")
+plot_waveform(mulaw, sample_rate, title="8 bit mu-law")
+plot_specgram(mulaw, sample_rate, title="8 bit mu-law")
+Audio(mulaw, rate=sample_rate)
+
+# G.722 codec
+g722 = apply_codec(waveform, sample_rate, "g722")
+plot_waveform(g722, sample_rate, title="G.722")
+plot_specgram(g722, sample_rate, title="G.722")
+Audio(g722, rate=sample_rate)
